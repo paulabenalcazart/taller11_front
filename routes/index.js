@@ -28,7 +28,7 @@ router.post('/photos/save', async function(req, res, next) {
   }
   const response = await axios.post(URL, data, config);
   if(response.status == '200' && response.statusText == 'OK'){
-    res.redirect('/')
+    res.redirect('/photos/add')
   } else {
     res.redirect('/')
   }
