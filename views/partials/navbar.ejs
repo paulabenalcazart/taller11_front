@@ -1,0 +1,194 @@
+<nav class="navbar-space">
+    <div class="container-fluid">
+        <div class="navbar-content">
+            <a class="brand" href="/photos/list">
+                <i class="fas fa-camera-retro"></i>
+                <span class="brand-text">PHOTO<span class="highlight">SPACE</span></span>
+            </a>
+
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-menu" id="navMenu">
+                <a href="/photos/list" class="nav-link">
+                    <i class="fas fa-th-large"></i>
+                    <span>Galería</span>
+                </a>
+                <a href="/photos/add" class="nav-link">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Agregar</span>
+                </a>
+                <a href="/photos/search" class="nav-link">
+                    <i class="fas fa-search"></i>
+                    <span>Buscar</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .navbar-space {
+        background: rgba(10, 14, 39, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid var(--border-glow);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        padding: 15px 0;
+    }
+
+    .navbar-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .brand i {
+        font-size: 28px;
+        color: var(--space-purple);
+        text-shadow: 0 0 10px var(--space-purple);
+    }
+
+    .brand-text {
+        letter-spacing: 2px;
+    }
+
+    .brand .highlight {
+        color: var(--space-cyan);
+        text-shadow: 0 0 10px var(--space-cyan);
+    }
+
+    .brand:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.2);
+    }
+
+    .nav-toggle {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .nav-toggle span {
+        width: 25px;
+        height: 3px;
+        background: var(--space-cyan);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-menu {
+        display: flex;
+        gap: 10px;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid var(--border-glow);
+        border-radius: 8px;
+        color: var(--text-primary);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-link::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .nav-link:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .nav-link i {
+        font-size: 18px;
+        z-index: 1;
+    }
+
+    .nav-link span {
+        z-index: 1;
+    }
+
+    .nav-link:hover {
+        background: rgba(99, 102, 241, 0.2);
+        border-color: var(--space-purple);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .nav-toggle {
+            display: flex;
+        }
+
+        .nav-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.98);
+            flex-direction: column;
+            padding: 20px;
+            gap: 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .nav-menu.active {
+            max-height: 500px;
+        }
+
+        .nav-link {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<script>
+    document.getElementById('navToggle')?.addEventListener('click', function () {
+        document.getElementById('navMenu')?.classList.toggle('active');
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

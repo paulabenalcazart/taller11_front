@@ -1,0 +1,158 @@
+<footer class="footer-space">
+    <div class="footer-content">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h5><i class="fas fa-rocket"></i> PhotoSpace</h5>
+                <p>Sistema de gestión fotográfica de nueva generación</p>
+            </div>
+            <div class="footer-section">
+                <h6>Navegación</h6>
+                <ul>
+                    <li><a href="/photos/list"><i class="fas fa-angle-right"></i> Galería</a></li>
+                    <li><a href="/photos/add"><i class="fas fa-angle-right"></i> Agregar</a></li>
+                    <li><a href="/photos/search"><i class="fas fa-angle-right"></i> Buscar</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h6>Desarrollador</h6>
+                <p><i class="fas fa-code"></i> <strong>Paula Benalcázar</strong></p>
+                <p><i class="far fa-copyright"></i> 2025 | v1.0.0</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Desarrollado con <i class="fas fa-heart pulse"></i> usando Node.js + Express</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .footer-space {
+        width: 100%;
+        background: linear-gradient(180deg, transparent 0%, rgba(10, 14, 39, 0.95) 20%, var(--space-darker) 100%);
+        border-top: 2px solid var(--border-glow);
+        box-shadow: 0 -4px 20px rgba(99, 102, 241, 0.2);
+        padding: 40px 20px 20px;
+        font-family: 'Rajdhani', sans-serif;
+        z-index: 10;
+        margin-top: auto;
+        position: relative;
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .footer-section h5 {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--space-cyan);
+        font-size: 20px;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px var(--space-cyan);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .footer-section h6 {
+        color: var(--space-purple);
+        font-weight: 600;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+    .footer-section p {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .footer-section ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-section ul li {
+        margin-bottom: 10px;
+    }
+
+    .footer-section ul li a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .footer-section ul li a:hover {
+        color: var(--space-cyan);
+        transform: translateX(5px);
+    }
+
+    .footer-section ul li a i {
+        font-size: 12px;
+    }
+
+    .footer-bottom {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(99, 102, 241, 0.2);
+        color: var(--text-secondary);
+    }
+
+    .footer-bottom p {
+        margin: 0;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .pulse {
+        color: var(--space-pink);
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { 
+            opacity: 1; 
+            transform: scale(1);
+        }
+        50% { 
+            opacity: 0.6; 
+            transform: scale(1.1);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .footer-grid {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .footer-section h5,
+        .footer-section p {
+            justify-content: center;
+        }
+
+        .footer-section ul li a {
+            justify-content: center;
+        }
+    }
+</style>
+
+</body>
+</html>

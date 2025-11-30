@@ -1,0 +1,372 @@
+<%- include('partials/header') %>
+<style>
+    .gallery-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px 20px;
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 20px;
+        border: 1px solid var(--border-glow);
+        backdrop-filter: blur(10px);
+    }
+
+    .gallery-header h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 42px;
+        background: linear-gradient(135deg, var(--space-cyan), var(--space-purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+        text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+    }
+
+    .gallery-header p {
+        color: var(--text-secondary);
+        font-size: 18px;
+    }
+
+    .message {
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        border: 1px solid;
+        animation: slideDown 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
+    }
+
+    .success {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.3);
+        color: #4ade80;
+    }
+
+    .error {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #f87171;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeOut {
+        to {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+    }
+
+    .btn-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, var(--space-purple), var(--space-pink));
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+
+    .btn-add:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+        color: white;
+    }
+
+    .table-container {
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid var(--border-glow);
+        backdrop-filter: blur(10px);
+        overflow-x: auto;
+        margin-bottom: 50px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    thead {
+        background: linear-gradient(135deg, var(--space-purple), var(--space-blue));
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    th {
+        padding: 18px 15px;
+        text-align: left;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 600;
+        color: white;
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    th:first-child {
+        border-radius: 12px 0 0 12px;
+    }
+
+    th:last-child {
+        border-radius: 0 12px 12px 0;
+    }
+
+    tbody tr {
+        background: rgba(30, 41, 59, 0.5);
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+    tbody tr:hover {
+        background: rgba(51, 65, 85, 0.7);
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    td {
+        padding: 18px 15px;
+        color: var(--text-primary);
+        border-top: 1px solid rgba(99, 102, 241, 0.1);
+        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    }
+
+    td:first-child {
+        border-left: 1px solid rgba(99, 102, 241, 0.1);
+        border-radius: 12px 0 0 12px;
+        font-weight: 600;
+        color: var(--space-cyan);
+    }
+
+    td:last-child {
+        border-right: 1px solid rgba(99, 102, 241, 0.1);
+        border-radius: 0 12px 12px 0;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(59, 130, 246, 0.5);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-delete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(239, 68, 68, 0.5);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-secondary);
+    }
+
+    .empty-state i {
+        font-size: 80px;
+        color: var(--space-purple);
+        opacity: 0.3;
+        margin-bottom: 20px;
+    }
+
+    .rating-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        background: rgba(251, 191, 36, 0.2);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        border-radius: 20px;
+        color: #fbbf24;
+        font-weight: 600;
+    }
+</style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <div class="content-wrapper">
+        <div class="gallery-header">
+            <h1><i class="fas fa-images"></i> GALERÍA ESPACIAL</h1>
+            <p>Gestiona tus fotografías en el espacio digital</p>
+        </div>
+
+        <% if (typeof message !== 'undefined' && message) { %>
+            <div class="message success" id="messageBox">
+                <i class="fas fa-check-circle"></i> <%= message %>
+            </div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="message error" id="errorBox">
+                <i class="fas fa-exclamation-circle"></i> <%= error %>
+            </div>
+        <% } %>
+        
+        <a href="/photos/add" class="btn-add">
+            <i class="fas fa-plus-circle"></i> NUEVA FOTOGRAFÍA
+        </a>
+        
+        <div class="table-container">
+            <table id="fotosTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>TÍTULO</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th>CALIFICACIÓN</th>
+                        <th>RUTA</th>
+                        <th>FECHA</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            const messageBox = document.getElementById('messageBox');
+            const errorBox = document.getElementById('errorBox');
+            
+            if (messageBox) {
+                setTimeout(() => {
+                    messageBox.remove();
+                    window.history.replaceState({}, document.title, '/photos/list');
+                }, 3000);
+            }
+            
+            if (errorBox) {
+                setTimeout(() => {
+                    errorBox.remove();
+                    window.history.replaceState({}, document.title, '/photos/list');
+                }, 3000);
+            }
+        });
+        
+        async function loadFotos() {
+            try {
+                const response = await fetch('/findAll/json');
+                const fotos = await response.json();
+                
+                const tbody = document.querySelector('#fotosTable tbody');
+                tbody.innerHTML = '';
+                
+                if (fotos.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="fas fa-image"></i>
+                                <h3>No hay fotografías</h3>
+                                <p>Comienza agregando tu primera foto</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                fotos.forEach(foto => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>#${foto.id}</td>
+                        <td><strong>${foto.titulo}</strong></td>
+                        <td>${foto.descripcion}</td>
+                        <td>
+                            <span class="rating-badge">
+                                <i class="fas fa-star"></i> ${foto.calificacion}
+                            </span>
+                        </td>
+                        <td>${foto.ruta || '<span style="color: var(--text-secondary);">Sin ruta</span>'}</td>
+                        <td>${new Date(foto.createdAt).toLocaleDateString('es-ES')}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-edit" onclick="editFoto(${foto.id})">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-delete" onclick="deleteFoto(${foto.id}, '${foto.titulo.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error al cargar fotos:', error);
+            }
+        }
+        
+        function editFoto(id) {
+            window.location.href = `/photos/edit/${id}`;
+        }
+        
+        async function deleteFoto(id, titulo) {
+            if (confirm(`¿Estás seguro de eliminar "${titulo}"?`)) {
+                try {
+                    const response = await fetch(`/delete/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        window.location.href = '/photos/list?message=' + encodeURIComponent(`"${titulo}" eliminada exitosamente`);
+                    } else {
+                        alert('Error al eliminar la foto');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la foto');
+                }
+            }
+        }
+        
+        loadFotos();
+    </script>
+
+<%- include('partials/footer') %>

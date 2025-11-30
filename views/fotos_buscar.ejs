@@ -1,0 +1,609 @@
+<%- include('partials/header') %>
+<style>
+    .search-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .search-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px 20px;
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 20px;
+        border: 1px solid var(--border-glow);
+        backdrop-filter: blur(10px);
+    }
+
+    .search-header h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 42px;
+        background: linear-gradient(135deg, var(--space-cyan), var(--space-purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .search-header p {
+        color: var(--text-secondary);
+        font-size: 18px;
+    }
+
+    .search-tabs {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .tab-button {
+        padding: 15px 30px;
+        background: rgba(30, 41, 59, 0.5);
+        border: 2px solid rgba(99, 102, 241, 0.3);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .tab-button:hover {
+        background: rgba(51, 65, 85, 0.7);
+        border-color: var(--space-purple);
+        transform: translateY(-2px);
+    }
+
+    .tab-button.active {
+        background: linear-gradient(135deg, var(--space-purple), var(--space-blue));
+        border-color: var(--space-purple);
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .search-form-container {
+        background: rgba(15, 23, 42, 0.6);
+        border: 2px solid var(--border-glow);
+        border-radius: 20px;
+        padding: 30px;
+        backdrop-filter: blur(10px);
+        margin-bottom: 40px;
+    }
+
+    .search-type {
+        display: none;
+    }
+
+    .search-type.active {
+        display: block;
+    }
+
+    .search-type h3 {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--space-cyan);
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .form-group label i {
+        color: var(--space-cyan);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 15px 20px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 2px solid rgba(99, 102, 241, 0.3);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--space-purple);
+        background: rgba(30, 41, 59, 0.8);
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-secondary);
+        opacity: 0.7;
+    }
+
+    .range-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .btn-search {
+        width: 100%;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, var(--space-purple), var(--space-pink));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-search:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+    }
+
+    .results-section {
+        display: none;
+    }
+
+    .results-section.show {
+        display: block;
+    }
+
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding: 20px;
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 12px;
+        border: 1px solid var(--border-glow);
+    }
+
+    .results-header h2 {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--space-cyan);
+        font-size: 24px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .results-count {
+        background: rgba(99, 102, 241, 0.2);
+        padding: 8px 15px;
+        border-radius: 20px;
+        color: var(--space-purple);
+        font-weight: 600;
+    }
+
+    .table-container {
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid var(--border-glow);
+        backdrop-filter: blur(10px);
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    thead {
+        background: linear-gradient(135deg, var(--space-purple), var(--space-blue));
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    th {
+        padding: 18px 15px;
+        text-align: left;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 600;
+        color: white;
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    th:first-child {
+        border-radius: 12px 0 0 12px;
+    }
+
+    th:last-child {
+        border-radius: 0 12px 12px 0;
+    }
+
+    tbody tr {
+        background: rgba(30, 41, 59, 0.5);
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+    tbody tr:hover {
+        background: rgba(51, 65, 85, 0.7);
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    td {
+        padding: 18px 15px;
+        color: var(--text-primary);
+        border-top: 1px solid rgba(99, 102, 241, 0.1);
+        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    }
+
+    td:first-child {
+        border-left: 1px solid rgba(99, 102, 241, 0.1);
+        border-radius: 12px 0 0 12px;
+        font-weight: 600;
+        color: var(--space-cyan);
+    }
+
+    td:last-child {
+        border-right: 1px solid rgba(99, 102, 241, 0.1);
+        border-radius: 0 12px 12px 0;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(59, 130, 246, 0.5);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-delete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(239, 68, 68, 0.5);
+    }
+
+    .rating-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        background: rgba(251, 191, 36, 0.2);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        border-radius: 20px;
+        color: #fbbf24;
+        font-weight: 600;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-secondary);
+    }
+
+    .empty-state i {
+        font-size: 80px;
+        color: var(--space-purple);
+        opacity: 0.3;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .search-header h1 {
+            font-size: 32px;
+        }
+
+        .range-inputs {
+            grid-template-columns: 1fr;
+        }
+
+        .results-header {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+</style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <div class="content-wrapper">
+        <div class="search-page">
+            <div class="search-header">
+                <h1><i class="fas fa-search"></i> BÚSQUEDA AVANZADA</h1>
+                <p>Encuentra fotografías por ID o calificación</p>
+            </div>
+
+            <div class="search-tabs">
+                <button class="tab-button active" onclick="showSearchType('id')">
+                    <i class="fas fa-hashtag"></i>
+                    Buscar por ID
+                </button>
+                <button class="tab-button" onclick="showSearchType('rate')">
+                    <i class="fas fa-star"></i>
+                    Buscar por Calificación
+                </button>
+            </div>
+
+            <div class="search-form-container">
+                <!-- Búsqueda por ID -->
+                <div id="searchById" class="search-type active">
+                    <h3><i class="fas fa-hashtag"></i> Búsqueda por ID</h3>
+                    <form onsubmit="searchById(event)">
+                        <div class="form-group">
+                            <label for="photoId">
+                                <i class="fas fa-fingerprint"></i>
+                                ID de la Fotografía
+                            </label>
+                            <input 
+                                type="number" 
+                                class="form-control" 
+                                id="photoId" 
+                                min="1" 
+                                placeholder="Ingresa el ID..."
+                                required
+                            >
+                        </div>
+                        <button type="submit" class="btn-search">
+                            <i class="fas fa-search"></i>
+                            Buscar Fotografía
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Búsqueda por Calificación -->
+                <div id="searchByRate" class="search-type">
+                    <h3><i class="fas fa-star"></i> Búsqueda por Calificación</h3>
+                    <form onsubmit="searchByRate(event)">
+                        <div class="range-inputs">
+                            <div class="form-group">
+                                <label for="lowerRate">
+                                    <i class="fas fa-arrow-down"></i>
+                                    Calificación Mínima
+                                </label>
+                                <input 
+                                    type="number" 
+                                    class="form-control" 
+                                    id="lowerRate" 
+                                    step="0.1" 
+                                    min="0" 
+                                    max="10" 
+                                    placeholder="0.0"
+                                    required
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="higherRate">
+                                    <i class="fas fa-arrow-up"></i>
+                                    Calificación Máxima
+                                </label>
+                                <input 
+                                    type="number" 
+                                    class="form-control" 
+                                    id="higherRate" 
+                                    step="0.1" 
+                                    min="0" 
+                                    max="10" 
+                                    placeholder="10.0"
+                                    required
+                                >
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-search">
+                            <i class="fas fa-search"></i>
+                            Buscar por Rango
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="resultsSection" class="results-section">
+                <div class="results-header">
+                    <h2><i class="fas fa-list"></i> Resultados</h2>
+                    <span class="results-count" id="resultsCount">0 encontrados</span>
+                </div>
+
+                <div class="table-container">
+                    <table id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>TÍTULO</th>
+                                <th>DESCRIPCIÓN</th>
+                                <th>CALIFICACIÓN</th>
+                                <th>RUTA</th>
+                                <th>FECHA</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div id="noResults" class="empty-state" style="display: none;">
+                        <i class="fas fa-search"></i>
+                        <h3>No se encontraron resultados</h3>
+                        <p>Intenta con otros criterios de búsqueda</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSearchType(type) {
+            // Actualizar tabs
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.tab-button').classList.add('active');
+
+            // Mostrar formulario correspondiente
+            document.querySelectorAll('.search-type').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            if (type === 'id') {
+                document.getElementById('searchById').classList.add('active');
+            } else {
+                document.getElementById('searchByRate').classList.add('active');
+            }
+
+            // Ocultar resultados
+            document.getElementById('resultsSection').classList.remove('show');
+        }
+
+        async function searchById(event) {
+            event.preventDefault();
+            const id = document.getElementById('photoId').value;
+
+            try {
+                const response = await fetch(`/findAllById/${id}/json`);
+                const fotos = await response.json();
+                displayResults(fotos);
+            } catch (error) {
+                console.error('Error al buscar:', error);
+                alert('Error al realizar la búsqueda');
+            }
+        }
+
+        async function searchByRate(event) {
+            event.preventDefault();
+            const lower = document.getElementById('lowerRate').value;
+            const higher = document.getElementById('higherRate').value;
+
+            if (parseFloat(lower) > parseFloat(higher)) {
+                alert('La calificación mínima no puede ser mayor que la máxima');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/findAllByRate/json?lower=${lower}&higher=${higher}`);
+                const fotos = await response.json();
+                displayResults(fotos);
+            } catch (error) {
+                console.error('Error al buscar:', error);
+                alert('Error al realizar la búsqueda');
+            }
+        }
+
+        function displayResults(fotos) {
+            const resultsSection = document.getElementById('resultsSection');
+            const tbody = document.querySelector('#resultsTable tbody');
+            const noResults = document.getElementById('noResults');
+            const resultsCount = document.getElementById('resultsCount');
+
+            tbody.innerHTML = '';
+            resultsSection.classList.add('show');
+
+            if (fotos.length === 0) {
+                document.getElementById('resultsTable').style.display = 'none';
+                noResults.style.display = 'block';
+                resultsCount.textContent = '0 encontrados';
+                return;
+            }
+
+            document.getElementById('resultsTable').style.display = 'table';
+            noResults.style.display = 'none';
+            resultsCount.textContent = `${fotos.length} encontrado${fotos.length > 1 ? 's' : ''}`;
+
+            fotos.forEach(foto => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>#${foto.id}</td>
+                    <td><strong>${foto.titulo}</strong></td>
+                    <td>${foto.descripcion}</td>
+                    <td>
+                        <span class="rating-badge">
+                            <i class="fas fa-star"></i> ${foto.calificacion}
+                        </span>
+                    </td>
+                    <td>${foto.ruta || '<span style="color: var(--text-secondary);">Sin ruta</span>'}</td>
+                    <td>${new Date(foto.createdAt).toLocaleDateString('es-ES')}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-edit" onclick="editFoto(${foto.id})">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn btn-delete" onclick="deleteFoto(${foto.id}, '${foto.titulo.replace(/'/g, "\\'")}')">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function editFoto(id) {
+            window.location.href = `/photos/edit/${id}`;
+        }
+
+        async function deleteFoto(id, titulo) {
+            if (confirm(`¿Estás seguro de eliminar "${titulo}"?`)) {
+                try {
+                    const response = await fetch(`/delete/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        alert(`"${titulo}" eliminada exitosamente`);
+                        location.reload();
+                    } else {
+                        alert('Error al eliminar la fotografía');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la fotografía');
+                }
+            }
+        }
+    </script>
+
+<%- include('partials/footer') %>

@@ -26,7 +26,7 @@
     .form-header h1 {
         font-family: 'Orbitron', sans-serif;
         font-size: 36px;
-        background: linear-gradient(135deg, var(--space-cyan), var(--space-purple));
+        background: linear-gradient(135deg, #3b82f6, var(--space-purple));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -36,6 +36,28 @@
     .form-header p {
         color: var(--text-secondary);
         font-size: 16px;
+    }
+
+    .loading-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .loading-state i {
+        font-size: 60px;
+        color: var(--space-purple);
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loading-state h3 {
+        color: var(--text-primary);
+        margin-top: 20px;
+        font-family: 'Rajdhani', sans-serif;
     }
 
     .form-group {
@@ -54,7 +76,7 @@
     }
 
     .form-group label i {
-        color: var(--space-cyan);
+        color: #3b82f6;
         font-size: 18px;
     }
 
@@ -72,9 +94,9 @@
 
     .form-control:focus {
         outline: none;
-        border-color: var(--space-purple);
+        border-color: #3b82f6;
         background: rgba(30, 41, 59, 0.8);
-        box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
     }
 
     .form-control::placeholder {
@@ -124,14 +146,14 @@
     }
 
     .btn-submit {
-        background: linear-gradient(135deg, var(--space-purple), var(--space-pink));
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
         color: white;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
     }
 
     .btn-submit:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
     }
 
     .btn-cancel {
@@ -169,6 +191,20 @@
         font-size: 18px;
     }
 
+    .error-message {
+        background: rgba(239, 68, 68, 0.1);
+        border: 2px solid rgba(239, 68, 68, 0.3);
+        border-radius: 12px;
+        padding: 15px;
+        color: #f87171;
+        margin-top: 20px;
+        display: none;
+    }
+
+    .error-message i {
+        margin-right: 10px;
+    }
+
     @media (max-width: 768px) {
         .form-card {
             padding: 25px;
@@ -192,11 +228,18 @@
         <div class="form-page">
             <div class="form-card">
                 <div class="form-header">
-                    <h1><i class="fas fa-camera"></i> NUEVA FOTOGRAFÍA</h1>
-                    <p>Agrega una nueva foto a tu colección espacial</p>
+                    <h1><i class="fas fa-edit"></i> EDITAR FOTOGRAFÍA</h1>
+                    <p>Actualiza la información de tu fotografía</p>
                 </div>
 
-                <form action="/photos/save" method="POST" id="photoForm">
+                <div id="loadingState" class="loading-state">
+                    <i class="fas fa-spinner"></i>
+                    <h3>Cargando datos...</h3>
+                </div>
+
+                <form id="editForm" style="display: none;">
+                    <input type="hidden" id="id" name="id" value="">
+                    
                     <div class="form-group">
                         <label for="title">
                             <i class="fas fa-heading"></i>
@@ -207,13 +250,9 @@
                             class="form-control" 
                             id="title" 
                             name="title" 
-                            placeholder="Ej: Nebulosa de Orión"
+                            placeholder="Título de la fotografía"
                             required
                         >
-                        <div class="input-hint">
-                            <i class="fas fa-info-circle"></i>
-                            Dale un nombre descriptivo a tu fotografía
-                        </div>
                     </div>
 
                     <div class="form-group">
@@ -228,10 +267,6 @@
                             placeholder="Describe tu fotografía..."
                             required
                         ></textarea>
-                        <div class="input-hint">
-                            <i class="fas fa-info-circle"></i>
-                            Agrega detalles sobre la fotografía
-                        </div>
                     </div>
 
                     <div class="form-group">
@@ -247,7 +282,6 @@
                             step="0.1" 
                             min="0" 
                             max="10" 
-                            placeholder="0.0"
                             required
                         >
                         <div class="rating-preview" id="ratingPreview" style="display: none;">
@@ -260,10 +294,29 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label for="ruta">
+                            <i class="fas fa-link"></i>
+                            Ruta (Opcional)
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="ruta" 
+                            name="ruta" 
+                            placeholder="URL o ruta de la imagen"
+                        >
+                    </div>
+
+                    <div class="error-message" id="errorMessage">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-submit">
                             <i class="fas fa-save"></i>
-                            Guardar Fotografía
+                            Actualizar Fotografía
                         </button>
                         <a href="/photos/list" class="btn btn-cancel">
                             <i class="fas fa-times"></i>
@@ -276,6 +329,8 @@
     </div>
 
     <script>
+        const fotoId = '<%= id %>';
+        
         // Preview de calificación
         const rateInput = document.getElementById('rate');
         const ratingPreview = document.getElementById('ratingPreview');
@@ -289,7 +344,6 @@
                 ratingPreview.style.display = 'flex';
                 ratingValue.textContent = value.toFixed(1);
                 
-                // Calcular estrellas (de 10 a 5 estrellas)
                 const stars = Math.round((value / 10) * 5);
                 starsPreview.innerHTML = '';
                 
@@ -302,17 +356,79 @@
                 ratingPreview.style.display = 'none';
             }
         });
-
-        // Validación del formulario
-        document.getElementById('photoForm').addEventListener('submit', function(e) {
+        
+        async function loadFoto() {
+            try {
+                const response = await fetch(`/findAllById/${fotoId}/json`);
+                const fotos = await response.json();
+                
+                if (fotos.length > 0) {
+                    const foto = fotos[0];
+                    document.getElementById('id').value = foto.id;
+                    document.getElementById('title').value = foto.titulo;
+                    document.getElementById('description').value = foto.descripcion;
+                    document.getElementById('rate').value = foto.calificacion;
+                    document.getElementById('ruta').value = foto.ruta || '';
+                    
+                    // Trigger rating preview
+                    rateInput.dispatchEvent(new Event('input'));
+                    
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('editForm').style.display = 'block';
+                } else {
+                    showError('Fotografía no encontrada');
+                }
+            } catch (error) {
+                console.error('Error al cargar foto:', error);
+                showError('Error al cargar los datos de la fotografía');
+            }
+        }
+        
+        function showError(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+        
+        document.getElementById('editForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
             const rate = parseFloat(document.getElementById('rate').value);
             
             if (rate < 0 || rate > 10) {
-                e.preventDefault();
-                alert('La calificación debe estar entre 0 y 10');
-                return false;
+                showError('La calificación debe estar entre 0 y 10');
+                return;
+            }
+            
+            const formData = {
+                id: document.getElementById('id').value,
+                titulo: document.getElementById('title').value,
+                descripcion: document.getElementById('description').value,
+                calificacion: rate,
+                ruta: document.getElementById('ruta').value
+            };
+            
+            try {
+                const response = await fetch('/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    window.location.href = '/photos/list?message=' + encodeURIComponent('Fotografía actualizada exitosamente');
+                } else {
+                    showError('Error al actualizar la fotografía');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error al actualizar la fotografía');
             }
         });
+        
+        loadFoto();
     </script>
 
 <%- include('partials/footer') %>
